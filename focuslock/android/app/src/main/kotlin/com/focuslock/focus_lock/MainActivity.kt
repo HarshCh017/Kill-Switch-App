@@ -18,5 +18,13 @@ class MainActivity: FlutterActivity() {
             
         EventChannel(flutterEngine.dartExecutor.binaryMessenger, AppBlockerChannels.EVENT_CHANNEL_NAME)
             .setStreamHandler(channels)
+
+        // Trigger ServiceWatchdog WorkManager
+        val workRequest = androidx.work.PeriodicWorkRequestBuilder<com.focuslock.focus_lock.services.ServiceWatchdog>(15, java.util.concurrent.TimeUnit.MINUTES).build()
+        androidx.work.WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+            "ServiceWatchdog",
+            androidx.work.ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
+        )
     }
 }

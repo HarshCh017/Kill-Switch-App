@@ -1,10 +1,18 @@
 import 'package:drift/drift.dart';
 import '../../data/database/app_database.dart';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
+
 class MetricsEngine {
   final AppDatabase _db;
+  final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
   MetricsEngine(this._db);
+
+  /// Tracks a core business event to Firebase Analytics
+  Future<void> logCriticalEvent(String eventName, {Map<String, Object>? parameters}) async {
+    await _analytics.logEvent(name: eventName, parameters: parameters);
+  }
 
   /// Generates the total blocked attempts derived entirely from the Event Store (Task 6.2)
   /// NEVER use precomputed counters. Always dynamically calculate from the single source of truth.

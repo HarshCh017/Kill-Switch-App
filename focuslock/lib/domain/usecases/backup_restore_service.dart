@@ -13,6 +13,9 @@ class BackupRestoreService {
   Future<String> exportBackup(String userId) async {
     final apps = await (_db.select(_db.blockedApps)..where((a) => a.userId.equals(userId))).get();
     
+    // Also export schedules mapped to these apps
+    final schedules = await _db.select(_db.schedules).get();
+    
     final payload = {
       'version': 'v6.1',
       'timestamp': DateTime.now().toIso8601String(),
@@ -20,6 +23,13 @@ class BackupRestoreService {
         'packageName': a.packageName,
         'appName': a.appName,
         'status': a.status
+      }).toList(),
+      'schedules': schedules.map((s) => {
+        'startHour': s.startHour,
+        'startMinute': s.startMinute,
+        'endHour': s.endHour,
+        'endMinute': s.endMinute,
+        'daysOfWeek': s.daysOfWeek,
       }).toList(),
     };
     

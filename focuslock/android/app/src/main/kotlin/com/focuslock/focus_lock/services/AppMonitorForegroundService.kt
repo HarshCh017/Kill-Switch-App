@@ -60,7 +60,7 @@ class AppMonitorForegroundService : Service() {
                     }
                 }
                 lastEventTime = now
-                delay(200) // Lightweight poll
+                delay(750) // ISSUE-010: Throttled from 200ms to 750ms to reduce battery impact
             }
         }
     }

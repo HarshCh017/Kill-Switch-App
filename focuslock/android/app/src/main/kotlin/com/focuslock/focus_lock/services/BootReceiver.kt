@@ -15,6 +15,12 @@ class BootReceiver : BroadcastReceiver() {
                 context.startService(serviceIntent)
             }
             // Trigger ServiceWatchdog WorkManager here
+            val workRequest = androidx.work.PeriodicWorkRequestBuilder<ServiceWatchdog>(15, java.util.concurrent.TimeUnit.MINUTES).build()
+            androidx.work.WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                "ServiceWatchdog",
+                androidx.work.ExistingPeriodicWorkPolicy.KEEP,
+                workRequest
+            )
         }
     }
 }
