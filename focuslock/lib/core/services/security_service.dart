@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_jailbreak_detection/flutter_jailbreak_detection.dart';
+import 'app_logger.dart';
+
 // Mocks for scaffolding
 class MockFlutterSecureStorage {
   final Map<String, String> _storage = {};
@@ -14,6 +18,41 @@ class SecurityService {
   static const String _emergencyUnlockResetDateKey = 'emergency_reset_date';
 
   SecurityService(this._storage);
+
+  /// Scans for root (Android) or Jailbreak (iOS).
+  static Future<bool> isCompromised() async {
+    try {
+      final jailbroken = await FlutterJailbreakDetection.jailbroken;
+      // We warn if it's rooted/jailbroken. We do not strictly block developer mode.
+      return jailbroken;
+    } catch (e) {
+      AppLogger.error('Failed to check jailbreak status: $e');
+      return false;
+    }
+  }
+
+  /// Displays a non-blocking warning dialog if the device is compromised
+  static Future<void> showSecurityWarningIfCompromised(BuildContext context) async {
+    final compromised = await isCompromised();
+    if (compromised && context.mounted) {
+      showDialog(
+        context: context,
+        barrierDismissible: false, // Force them to acknowledge
+        builder: (context) => AlertDialog(
+          title: const Text('Security Warning'),
+          content: const Text(
+            'This device appears to be rooted or jailbroken. While FocusLock will continue to function, your digital wellbeing restrictions can easily be bypassed by root-level applications.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('I Understand'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   /// Sets the strict mode PIN securely.
   Future<void> setStrictModePin(String pin) async {

@@ -60,6 +60,8 @@ dependencies:
   device_info_plus: ^10.1.0
   installed_applications: ^2.1.1
   connectivity_plus: ^6.0.3
+  in_app_update: ^4.2.2
+  flutter_jailbreak_detection: ^0.1.1
   
   # Monetization removed (App is now 100% free)
 

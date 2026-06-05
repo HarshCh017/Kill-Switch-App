@@ -10,6 +10,8 @@ import 'presentation/navigation/main_nav_screen.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as flutter_secure_storage;
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
 import 'core/constants/app_constants.dart';
+import 'core/services/update_service.dart';
+import 'core/services/security_service.dart';
 
 void main() {
   runZonedGuarded(() async {
@@ -104,6 +106,10 @@ class _AppRouterState extends State<AppRouter> {
         _isAuthenticated = auth;
         _isLoading = false;
       });
+      
+      // Sprint 6 Polish: Trigger OTA Update check and Security Warning after mount
+      UpdateService.checkForUpdates();
+      SecurityService.showSecurityWarningIfCompromised(context);
     }
   }
 
